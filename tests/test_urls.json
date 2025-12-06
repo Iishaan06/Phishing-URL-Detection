@@ -1,0 +1,19 @@
+[
+  {
+    "url": "https://accounts.google.com/signin",
+    "label": "legitimate"
+  },
+  {
+    "url": "http://paypal.com.security-updates.info/login",
+    "label": "phishing"
+  },
+  {
+    "url": "https://my-university.edu/portal",
+    "label": "legitimate"
+  },
+  {
+    "url": "http://198.51.100.42/bankofamerica/verify",
+    "label": "phishing"
+  }
+]
+
