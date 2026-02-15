@@ -2,7 +2,12 @@ from flask import Blueprint, current_app, jsonify, request
 
 from .feature_extractor import extract_features
 from .llm_client import LLMClient, LLMClientError
+from .trained_detector import TrainedMLDetector
 from .utils import dedupe_reasons, is_valid_url
+
+
+# Initialize the trained ML detector
+ml_detector = TrainedMLDetector()
 
 
 def register_routes(app) -> None:
@@ -39,72 +44,34 @@ def register_routes(app) -> None:
                 400,
             )
 
-        features = extract_features(url)
-        client = _build_client()
-
-        try:
-            llm_result = client.analyze_url(url, features)
-        except LLMClientError as exc:
-            # Log the error for debugging
-            import logging
-            logging.error(f"LLM Client Error: {exc}")
+        # Use trained ML detector
+        verdict, confidence, explanation, reasons = ml_detector.predict(url)
+        
+        if verdict == "error":
+            # URL validation error
             return (
                 jsonify({
-                    "error": "LLM provider failure",
-                    "details": str(exc),
-                    "fallback": "Using heuristic analysis only"
+                    "error": explanation,
+                    "details": "Unable to analyze this URL"
                 }),
-                503,
+                400,
             )
-        except Exception as exc:
-            # Catch any other unexpected errors
-            import logging
-            logging.error(f"Unexpected error in LLM analysis: {exc}")
-            # Fall back to heuristics
-            from .utils import heuristics_score
-            score, reasons = heuristics_score(features)
-            verdict = "phishing" if score >= 0.5 else "legitimate"
-            confidence = min(score, 0.95) if verdict == "phishing" else (1.0 if score <= 0.1 else 1.0 - (score * 1.25))
-            confidence = max(0.5, min(confidence, 1.0)) if verdict == "legitimate" else confidence
-            
-            response = {
-                "url": features["normalized_url"],
-                "verdict": verdict,
-                "confidence": round(confidence, 2),
-                "explanation": "LLM analysis unavailable. Using heuristic analysis only.",
-                "reasons": reasons,
-                "features": features,
-            }
-            return jsonify(response)
-
+        
+        # Get features for response
+        features = extract_features(url)
+        
         response = {
             "url": features["normalized_url"],
-            "verdict": llm_result.verdict,
-            "confidence": llm_result.confidence,
-            "explanation": llm_result.explanation,
-            "reasons": dedupe_reasons(
-                llm_result.reasons,
-                features.get("matched_keywords", []),
-            ),
+            "verdict": verdict,
+            "confidence": round(confidence, 2),
+            "explanation": explanation,
+            "reasons": reasons if reasons else [],
             "features": features,
+            "detection_method": "Machine Learning Model (trained on 549K phishing URLs)"
         }
         return jsonify(response)
 
     app.register_blueprint(api)
-
-
-def _build_client() -> LLMClient:
-    config = current_app.config
-    return LLMClient(
-        # Provider - LLM provider name
-        provider=config.get("LLM_PROVIDER", "mock"),
-        # API key - Set via environment variable LLM_API_KEY
-        api_key=config.get("LLM_API_KEY"),
-        base_url=config.get("LLM_BASE_URL"),
-        # Version - Model version/name
-        model=config.get("LLM_MODEL", "sonar-pro"),
-        timeout=config.get("REQUEST_TIMEOUT", 8.0),
-    )
 
 
 def main() -> None:

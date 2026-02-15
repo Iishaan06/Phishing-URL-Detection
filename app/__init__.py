@@ -10,13 +10,13 @@ def create_app(config: Optional[Dict[str, Any]] = None) -> Flask:
     app = Flask(__name__)
 
     default_config = {
-        # Provider - LLM provider name (e.g., "perplexity", "openai", "mock")
+        # Provider - LLM provider name (e.g., "openai", "mock")
         "LLM_PROVIDER": os.getenv("LLM_PROVIDER", "mock"),
         # API key - Set via environment variable LLM_API_KEY
         "LLM_API_KEY": os.getenv("LLM_API_KEY"),
         "LLM_BASE_URL": os.getenv("LLM_BASE_URL"),
-        # Version - Model version/name (e.g., "sonar-pro", "gpt-4")
-        "LLM_MODEL": os.getenv("LLM_MODEL", "sonar-pro"),
+        # Version - Model version/name (e.g., "gpt-4")
+        "LLM_MODEL": os.getenv("LLM_MODEL", "gpt-4"),
         "REQUEST_TIMEOUT": float(os.getenv("REQUEST_TIMEOUT", "8.0")),
     }
     app.config.from_mapping(default_config)

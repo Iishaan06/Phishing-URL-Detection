@@ -37,22 +37,6 @@ python -m flask --app app.main run
 
 Open `frontend/index.html` in your browser (or serve it via Live Server) and submit URLs to `http://localhost:5000/api/check`.
 
-## Configuring the LLM (Perplexity)
-
-The backend defaults to a deterministic mock model so that workshops/tests run offline.  
-To use **Perplexity** as your LLM:
-
-- Set these environment variables (Windows `cmd` / PowerShell):
-
-```cmd
-setx LLM_PROVIDER "perplexity"
-setx LLM_API_KEY "your_perplexity_api_key"
-setx LLM_BASE_URL "https://api.perplexity.ai/chat/completions"
-setx LLM_MODEL "sonar-pro"
-```
-
-- Restart your terminal, then run the app again.
-- The backend will send a chat-style request to Perplexity’s `/chat/completions` endpoint with a compact prompt produced in `utils.build_prompt`, and it expects a JSON answer in the message content.
 
 ## Tests
 

@@ -26,7 +26,7 @@
 │              │                      │
 │  ┌───────────▼──────────────────┐   │
 │  │  3. LLM Client               │   │
-│  │     - Calls Perplexity API   │   │
+│  │     - Generic LLM provider    │   │
 │  │     - Blends with heuristics |   │
 │  └───────────┬──────────────────┘   │
 │              │                      │
@@ -80,7 +80,7 @@
 
 5. **LLM Analysis** (`app/llm_client.py:47`)
    - Builds prompt with URL + features
-   - Calls Perplexity API
+   - Calls LLM provider API
    - Parses JSON response
    - Falls back to heuristics if LLM fails
 
@@ -164,16 +164,16 @@ Low Indicators (only if already suspicious):
 
 ### **3. LLM Client** (`app/llm_client.py`)
 
-**Purpose**: AI-powered analysis using Perplexity API
+**Purpose**: AI-powered analysis using generic LLM API
 
 **Two Modes**:
 1. **Mock Mode** (no API key): Uses heuristics only
-2. **Live Mode** (with API key): Calls Perplexity API
+2. **Live Mode** (with API key): Calls LLM provider API
 
 **Process**:
 ```python
 1. Build prompt with URL + features
-2. Send to Perplexity /chat/completions
+2. Send to LLM provider endpoint
 3. Parse JSON response (with fallback parsing)
 4. Extract: verdict, confidence, explanation, reasons
 5. Blend LLM confidence with heuristic score
@@ -440,7 +440,7 @@ logger.info(f"URL analyzed: {url}, Verdict: {verdict}")
 1. **No Historical Data**: Doesn't learn from past analyses
 2. **Limited Brand Database**: Only ~15 brands checked for typosquatting
 3. **No Real-time Threat Intel**: Doesn't check against threat feeds
-4. **Single LLM Provider**: Tied to Perplexity (no fallback)
+4. **Single LLM Provider**: Requires API key and base URL configuration
 5. **No User Feedback Loop**: Can't improve from user corrections
 6. **No Batch Processing**: One URL at a time
 7. **No Caching**: Re-analyzes same URLs repeatedly

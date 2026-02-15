@@ -1,0 +1,122 @@
+[
+  {
+    "url": "https://accounts.google.com/signin",
+    "label": "legitimate"
+  },
+  {
+    "url": "https://www.google.com",
+    "label": "legitimate"
+  },
+  {
+    "url": "https://mail.google.com",
+    "label": "legitimate"
+  },
+  {
+    "url": "https://github.com/login",
+    "label": "legitimate"
+  },
+  {
+    "url": "https://www.amazon.com",
+    "label": "legitimate"
+  },
+  {
+    "url": "https://www.amazon.com/signin",
+    "label": "legitimate"
+  },
+  {
+    "url": "https://www.walmart.com",
+    "label": "legitimate"
+  },
+  {
+    "url": "https://www.chase.com",
+    "label": "legitimate"
+  },
+  {
+    "url": "https://www.paypal.com",
+    "label": "legitimate"
+  },
+  {
+    "url": "https://www.ebay.com",
+    "label": "legitimate"
+  },
+  {
+    "url": "https://www.facebook.com",
+    "label": "legitimate"
+  },
+  {
+    "url": "https://www.netflix.com",
+    "label": "legitimate"
+  },
+  {
+    "url": "https://www.microsoft.com",
+    "label": "legitimate"
+  },
+  {
+    "url": "https://account.microsoft.com",
+    "label": "legitimate"
+  },
+  {
+    "url": "https://www.apple.com",
+    "label": "legitimate"
+  },
+  {
+    "url": "http://paypal.com.security-updates.info/login",
+    "label": "phishing"
+  },
+  {
+    "url": "https://faccebook.com@is.gd/xA8ew2",
+    "label": "phishing"
+  },
+  {
+    "url": "https://accounts-google.com/signin",
+    "label": "phishing"
+  },
+  {
+    "url": "https://gogle.com/accounts/signin",
+    "label": "phishing"
+  },
+  {
+    "url": "http://198.51.100.42/bankofamerica/verify",
+    "label": "phishing"
+  },
+  {
+    "url": "https://amazom.com/account/secure",
+    "label": "phishing"
+  },
+  {
+    "url": "https://my-university.edu.phishing-site.com/portal",
+    "label": "phishing"
+  },
+  {
+    "url": "https://micro soft.com/login.php",
+    "label": "phishing"
+  },
+  {
+    "url": "https://appl3.com/account",
+    "label": "phishing"
+  },
+  {
+    "url": "https://bit.ly/paypal-login-veri",
+    "label": "phishing"
+  },
+  {
+    "url": "https://tinyurl.com/amazonlogin",
+    "label": "phishing"
+  },
+  {
+    "url": "https://goo.gl/verify-netflix",
+    "label": "phishing"
+  },
+  {
+    "url": "http://www.phishing-test.com/banks/wellsfargo",
+    "label": "phishing"
+  },
+  {
+    "url": "https://secure.paypa1.com/login",
+    "label": "phishing"
+  },
+  {
+    "url": "https://accounts.google.com@evil.com/signin",
+    "label": "phishing"
+  }
+]

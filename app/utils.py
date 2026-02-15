@@ -60,6 +60,21 @@ def heuristics_score(features: Dict[str, Union[float, int, bool]]) -> Tuple[floa
         score += 0.3
         reasons.append("URL uses a known URL shortener, which is common in phishing links to hide destination.")
     
+    # NEW: Suspicious keywords in path (login, account, verify, etc) - HIGH indicator
+    if features.get("has_suspicious_path"):
+        score += 0.35
+        reasons.append("URL path contains suspicious keywords (login, account, verify, etc.) commonly used in phishing.")
+    
+    # NEW: Brand names embedded in unusual locations
+    if features.get("has_embedded_brand"):
+        score += 0.25
+        reasons.append("Brand name (PayPal, Amazon, etc.) found embedded in unusual location in URL path.")
+    
+    # NEW: CMS hosting paths commonly abused for phishing
+    if features.get("has_cms_path"):
+        score += 0.2
+        reasons.append("URL path suggests content is hosted on compromised website (WordPress, Joomla, etc.).")
+    
     # If both @ and shortener are present, it's a very strong phishing signal
     if features.get("has_at_in_host") and features.get("shortener_domain"):
         score += 0.15

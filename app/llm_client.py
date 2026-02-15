@@ -48,12 +48,7 @@ class LLMClient:
         return self._call_provider(url, features)
 
     def _call_provider(self, url: str, features: Dict[str, Any]) -> LLMResult:
-        """Call the configured remote LLM provider.
-
-        Currently this is tailored for Perplexity's /chat/completions endpoint,
-        where the JSON body uses an OpenAI-style chat format and the model
-        responds with text in choices[0].message.content.
-        """
+        """Call the configured remote LLM provider (generic endpoint)."""
         prompt = build_prompt(url, features)
 
         headers = {
@@ -61,20 +56,11 @@ class LLMClient:
             "Content-Type": "application/json",
         }
 
-        if self.provider.lower() == "perplexity":
-            payload = {
-                "model": self.model,
-                "messages": [
-                    {"role": "user", "content": prompt},
-                ],
-                "temperature": 0.0,
-            }
-        else:
-            # Generic fallback: treat provider like a simple completion endpoint
-            payload = {
-                "model": self.model,
-                "input": prompt,
-            }
+        # Generic payload format
+        payload = {
+            "model": self.model,
+            "input": prompt,
+        }
 
         response = self.session.post(
             self.base_url,
@@ -88,16 +74,9 @@ class LLMClient:
             )
 
         data = response.json()
+        message = data.get("output", "")
 
-        if self.provider.lower() == "perplexity":
-            try:
-                message = data["choices"][0]["message"]["content"]
-            except (KeyError, IndexError, TypeError) as exc:
-                raise LLMClientError(f"Unexpected Perplexity response format: {data}") from exc
-        else:
-            message = data.get("output", "")
-
-        # Try to extract JSON from the response (Perplexity might return text with JSON embedded)
+        # Try to extract JSON from the response
         parsed = None
         try:
             # First, try to parse as pure JSON

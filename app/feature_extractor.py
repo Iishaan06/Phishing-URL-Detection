@@ -56,6 +56,31 @@ def extract_features(raw_url: str) -> Dict[str, Union[int, float, str, bool, Lis
     SHORTENERS = {"is.gd", "bit.ly", "tinyurl.com", "t.co", "goo.gl", "ow.ly", "buff.ly", "rebrand.ly"}
     shortened = actual_host in SHORTENERS or any(short in actual_host for short in SHORTENERS)
     
+    # Detect suspicious keywords in URL path (common in phishing)
+    PHISHING_KEYWORDS = {"login", "account", "verify", "confirm", "update", "secure", "password", 
+                         "auth", "signin", "checkout", "payment", "card", "banking", "alert"}
+    path_lower = parsed.path.lower()
+    suspicious_path_keywords = sum(1 for kw in PHISHING_KEYWORDS if kw in path_lower)
+    has_suspicious_path = suspicious_path_keywords >= 1
+    
+    # Detect embedded brand names in URL path (e.g., /paypal.com/ in middle of URL)
+    MAJOR_BRANDS = ["paypal", "amazon", "google", "facebook", "microsoft", "apple", "linkedin", 
+                    "linkedin", "instagram", "netflix", "bank", "chase", "wellsfargo", "itau"]
+    embedded_brands = 0
+    if parsed.path != "/":
+        for brand in MAJOR_BRANDS:
+            # Count occurrences of brand name in path/query (not in domain)
+            if brand in parsed.path.lower():
+                embedded_brands += 1
+            if parsed.query and brand in parsed.query.lower():
+                embedded_brands += 1
+    has_embedded_brand = embedded_brands >= 1
+    
+    # Detect CMS/hosting paths that commonly host phishing (wp-content, joomla, etc)
+    CMS_PATHS = ["/wp-content/", "/wp-admin/", "/plugins/", "/components/", "/includes/", 
+                "/cache/", "/libraries/", "/plugins/", "/modules/"]
+    has_cms_path = any(cms in parsed.path.lower() for cms in CMS_PATHS)
+    
     # Typosquatting detection: check the domain BEFORE @ for brand name typos
     # e.g., "faccebook.com" (before @) should be checked, not "is.gd" (after @)
     domain_parts = domain_before_at.split(".")
@@ -92,6 +117,10 @@ def extract_features(raw_url: str) -> Dict[str, Union[int, float, str, bool, Lis
                     break
 
     return {
+        "has_suspicious_path": has_suspicious_path,
+        "has_embedded_brand": has_embedded_brand,
+        "has_cms_path": has_cms_path,
+        "suspicious_path_keywords": suspicious_path_keywords,
         "normalized_url": normalized_url,
         "url_length": len(normalized_url),
         "num_dots": normalized_url.count("."),
